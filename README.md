@@ -1,9 +1,9 @@
 # 0x00. AirBnB clone - The console
-[]()
+![](https://github.com/MrGiddy/AirBnB_clone/blob/main/imgs/hbnb.JPG)
 
 ## Concepts
-* [Python packages]()
-* [AirBnB clone]()
+* [**Python packages**]()
+* [**AirBnB clone**]()
 
 # Background Context
 ## Welcome to the AirBnB clone project!
@@ -71,9 +71,9 @@ General
 * The code should use the pycodestyle (version ```2.8.*```)
 * All the files must be executable
 * The length of the files will be tested using ```wc```
-* All the modules should have a documentation (```python3 -c 'print(\_\_import\_\_("my_module").\_\_doc\_\_)'```)
-* All the classes should have a documentation (```python3 -c 'print(\_\_import\_\_("my_module").MyClass.\_\_doc\_\_)'```)
-* All the functions (inside and outside a class) should have a documentation (```python3 -c 'print(\_\_import\_\_("my_module").my_function.\_\_doc\_\_)'``` and ```python3 -c 'print(\_\_import\_\_("my_module").MyClass.my_function.\_\_doc\_\_)'```)
+* All the modules should have a documentation (```python3 -c 'print(__import__("my_module").__doc__)'```)
+* All the classes should have a documentation (```python3 -c 'print(__import__("my_module").MyClass.__doc__)'```)
+* All the functions (inside and outside a class) should have a documentation (```python3 -c 'print(__import__("my_module").my_function.__doc__)'``` and ```python3 -c 'print(__import__("my_module").MyClass.my_function.__doc__)'```)
 
 # Python Unit Tests
 * Allowed editors: ```vi```, ```vim```, ```emacs```
@@ -134,7 +134,7 @@ $
 
 All tests should also pass in non-interactive mode: ```$ echo "python3 -m unittest discover tests" | bash```
 
-[]()
+![](https://github.com/MrGiddy/AirBnB_clone/blob/main/imgs/airbnb_architectural_design.JPG)
 
 # Tasks
 ### 0. README, AUTHORS
