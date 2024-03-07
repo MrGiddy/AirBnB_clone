@@ -11,29 +11,67 @@ import uuid
 class testInstantiation(unittest.TestCase):
     """unittest cases for initialized instance variables"""
 
-    def test_id_unique(self):
+    def test_init_id_unique(self):
         my_model = BaseModel()
         my_model2 = BaseModel()
         self.assertNotEqual(my_model.id, my_model2.id)
 
-    def test_id_string(self):
+    def test_init_id_string(self):
         my_model = BaseModel()
         self.assertEqual(str, type(my_model.id))
 
-    def test_id_uuid4(self):
+    def test_init_id_uuid4(self):
         my_model = BaseModel()
         uuid_obj = uuid.UUID(my_model.id, version=4)
         self.assertEqual(uuid_obj.version, 4)
 
-    def test_created_at_is_datetime(self):
+    def test_init_created_at_is_datetime(self):
         my_model = BaseModel()
         time_created = my_model.created_at
         self.assertEqual(datetime, type(time_created))
 
-    def test_updated_at_is_datetime(self):
+    def test_init_updated_at_is_datetime(self):
         my_model = BaseModel()
         time_updated = my_model.updated_at
         self.assertEqual(datetime, type(time_updated))
+
+    def test_init_kwargs_works(self):
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertEqual("My_First_Model", my_new_model.name)
+        self.assertEqual(89, my_new_model.my_number)
+        self.assertIsNotNone(my_new_model.id)
+        self.assertEqual(type(my_new_model.created_at), datetime)
+        self.assertEqual(type(my_new_model.updated_at), datetime)
+
+    def test_init_kwargs_empty(self):
+        empty_dict = {}
+        my_model = BaseModel(**empty_dict)
+        self.assertEqual(3, len(my_model.__dict__))
+        self.assertIsNotNone(my_model.id)
+        self.assertIsNotNone(my_model.created_at)
+        self.assertIsNotNone(my_model.updated_at)
+        self.assertEqual(type(my_model.id), str)
+        self.assertEqual(type(my_model.created_at), datetime)
+        self.assertEqual(type(my_model.updated_at), datetime)
+
+    def test_init_kwargs_custom_dict(self):
+        custom_dict = {
+            'id': '56d43177-cc5f-4d6c-a0c1-e167f8c27337',
+            'created_at': '2022-01-01T00:00:00',
+            'updated_at': '2022-01-01T01:00:00',
+            'custom_attr': [90, 100]
+        }
+        my_model = BaseModel(**custom_dict)
+        created_at = my_model.created_at.isoformat()
+        updated_at = my_model.updated_at.isoformat()
+        self.assertEqual(my_model.id, '56d43177-cc5f-4d6c-a0c1-e167f8c27337')
+        self.assertEqual(created_at, '2022-01-01T00:00:00')
+        self.assertEqual(updated_at, '2022-01-01T01:00:00')
+        self.assertEqual(my_model.custom_attr, [90, 100])
 
 
 class testStr(unittest.TestCase):

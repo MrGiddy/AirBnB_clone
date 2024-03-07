@@ -7,11 +7,21 @@ from datetime import datetime
 class BaseModel():
     """Defines all common attributes/methods for other classes"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Instantiates BaseModel"""
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+
+        if kwargs and kwargs['id']:
+            for key in kwargs:
+                if key in ('created_at', 'updated_at'):
+                    kwargs[key] = datetime.fromisoformat(kwargs[key])
+
+            keys_list = [key for key in kwargs if key != '__class__']
+            for key in keys_list:
+                setattr(self, key, kwargs[key])
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def save(self):
         """Updates updated_at with the current datetime"""
