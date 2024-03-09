@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 """Defines unittest cases for BaseModel"""
-from datetime import datetime
-import io
 import contextlib
-from models.base_model import BaseModel
+import io
+import os
 import unittest
 import uuid
+from datetime import datetime
+from models.base_model import BaseModel
 
 
-class testInstantiation(unittest.TestCase):
+# 1. Test BaseModel Instantiation
+
+
+class test_BaseModel_Instantiation(unittest.TestCase):
     """unittest cases for initialized instance variables"""
 
     def test_init_id_unique(self):
@@ -74,6 +78,8 @@ class testInstantiation(unittest.TestCase):
         self.assertEqual(my_model.custom_attr, [90, 100])
 
 
+# 2. Test BaseModel methods
+
 class testStr(unittest.TestCase):
     """unittests for overidden __str__ method"""
 
@@ -93,6 +99,25 @@ class testStr(unittest.TestCase):
 class testSave(unittest.TestCase):
     """unittest cases for save method"""
 
+    @classmethod
+    def setUp(self):
+        try:
+            os.rename('file.json', 'tmp_file')
+        except FileNotFoundError:
+            pass
+
+    @classmethod
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
+            pass
+
+        try:
+            os.rename('tmp_file', 'file.json')
+        except FileNotFoundError:
+            pass
+
     def test_save_works(self):
         my_model = BaseModel()
         update1 = my_model.updated_at
@@ -104,6 +129,13 @@ class testSave(unittest.TestCase):
         my_model = BaseModel()
         my_model.save
         self.assertEqual(datetime, type(my_model.updated_at))
+
+    def test_save_updates_file(self):
+        my_model = BaseModel()
+        my_model.save()
+        key = f'BaseModel.{my_model.id}'
+        with open('file.json', 'r', encoding='utf-8') as f:
+            self.assertTrue(key in f.read())
 
 
 class testToDict(unittest.TestCase):
@@ -145,3 +177,7 @@ class testToDict(unittest.TestCase):
         ret_dict = my_model.to_dict()
         isoformat_string = ret_dict['updated_at']
         self.assertTrue(self.is_isoformat(isoformat_string))
+
+
+if __name__ == '__main__':
+    unittest.main()
