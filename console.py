@@ -182,8 +182,8 @@ class HBNBCommand(cmd.Cmd):
 
         Type "help precmd" + Enter for detailed information of the commands
         """
-        # This pattern matches "MyClass.show('some-uuid')"
-        pattern = r'(\w+)\.show[(]"(.+?)"[)]'
+        # This pattern matches "MyClass.command('some-uuid')"
+        pattern = r'(\w+)\.(\w+)[(]"(.+?)"[)]'
         match = re.match(pattern, line)
 
         # "MyClass.all()" command
@@ -200,17 +200,18 @@ class HBNBCommand(cmd.Cmd):
             print(count)
             count = 0
             return ""  # to avoid returning None
-        # "MyClass.show()" command
+        # "MyClass.command()" line - command could be show/destroy
         elif match:
             class_name = match.group(1)
-            class_id = match.group(2)
-            return f'show {class_name} {class_id}'
+            command = match.group(2)
+            class_id = match.group(3)
+            return f'{command} {class_name} {class_id}'
         else:
             return line
 
     def help_precmd(self):
         """
-        Intercepts and checks command inputs for specific commands
+        `precmd` Intercepts and checks command inputs for specific commands
         to either preprocess or implement and execute.
 
         1. If <line> is of the form "AnyClass.all()", precmd
