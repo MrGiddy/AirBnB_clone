@@ -92,21 +92,20 @@ class testStr(unittest.TestCase):
 
     def test_str_equal(self):
         my_model = BaseModel()
-        expected = f'[BaseModel] ({my_model.id}) {my_model.__dict__}'
+        my_model.id = '123'
+        expected = f'[BaseModel] (123) {my_model.__dict__}'
         self.assertEqual(expected, self.captured_stdout(my_model))
 
 
 class testSave(unittest.TestCase):
     """unittest cases for save method"""
 
-    @classmethod
     def setUp(self):
         try:
             os.rename('file.json', 'tmp_file')
         except FileNotFoundError:
             pass
 
-    @classmethod
     def tearDown(self):
         try:
             os.remove('file.json')
