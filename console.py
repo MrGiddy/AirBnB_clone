@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Defines HBNBCommand class"""
 import cmd
+import re
 from models import storage
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
@@ -178,7 +179,13 @@ class HBNBCommand(cmd.Cmd):
         """
         Intercepts and checks command inputs for specific commands
         to either preprocess or execute.
+
+        Type "help precmd" + Enter for detailed information of the commands
         """
+        # This pattern matches "MyClass.show('some-uuid')"
+        pattern = r'(\w+)\.show[(]"(.+?)"[)]'
+        match = re.match(pattern, line)
+
         # "MyClass.all()" command
         if line.endswith(".all()"):
             class_name = line.split('.')[0]
@@ -193,6 +200,11 @@ class HBNBCommand(cmd.Cmd):
             print(count)
             count = 0
             return ""  # to avoid returning None
+        # "MyClass.show()" command
+        elif match:
+            class_name = match.group(1)
+            class_id = match.group(2)
+            return f'show {class_name} {class_id}'
         else:
             return line
 
@@ -201,19 +213,26 @@ class HBNBCommand(cmd.Cmd):
         Intercepts and checks command inputs for specific commands
         to either preprocess or implement and execute.
 
-        1. If <line> is of the form "MyClass.all()", precmd
-           changes it to "all MyCassName", which is
+        1. If <line> is of the form "AnyClass.all()", precmd
+           changes it to "all AnyClassName", which is
            to be executed by do_all() handler
 
             Usage:
-                MyClass.all()  # Translated to "all MyClass"
+                AnyClass.all()  # Translated to "all MyClass"
 
-        2. if <line> is of the form "MyClass.count(), precmd
-           implements counting of the number of occurrences of "MyClass"
+        2. if <line> is of the form "AnyClass.count(), precmd
+           implements counting of the number of occurrences of "AnyClass"
            instances and prints the count
 
            Usage:
-                MyClass.count()
+                AnyClass.count()
+
+        3. If <line> is of the form "AnyClass.show('some-uuid')", precmd
+           changes it to "show AnyClass some-uuid", which is
+           to be executed by do_show() handler
+
+        Usage:
+            AnyClass.show('a-uuid')  # Translated to 'show AnyClass a-uuid'
         """
         print(getattr(self, "help_precmd").__doc__)
 
