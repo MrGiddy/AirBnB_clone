@@ -134,7 +134,7 @@ class HBNBCommand(cmd.Cmd):
                 class_instance_objs = []
                 target_class = classes[class_name]
                 for value in storage.all().values():
-                    if isinstance(value, target_class):
+                    if type(value) == target_class:
                         class_instance_objs.append(str(value))
                 print(class_instance_objs)
             else:
@@ -173,6 +173,22 @@ class HBNBCommand(cmd.Cmd):
                 instance = storage.all()[key]
                 setattr(instance, attrib_name, attrib_value)
                 storage.save()
+
+    def precmd(self, line):
+        """
+        Intercepts and preprocesses a command line input.
+
+        If <line> is of the form "MyClassName.all()", it
+        is changed to "all MyCassName", which is
+        to be executed by do_all() handler
+        """
+
+        if line.endswith(".all()"):
+            class_name = line.split('.')[0]
+            line = f'all {class_name}'
+            return line
+        else:
+            return line
 
     def emptyline(self):
         pass
