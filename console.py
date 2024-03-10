@@ -176,19 +176,46 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """
-        Intercepts and preprocesses a command line input.
-
-        If <line> is of the form "MyClassName.all()", it
-        is changed to "all MyCassName", which is
-        to be executed by do_all() handler
+        Intercepts and checks command inputs for specific commands
+        to either preprocess or execute.
         """
-
+        # "MyClass.all()" command
         if line.endswith(".all()"):
             class_name = line.split('.')[0]
-            line = f'all {class_name}'
-            return line
+            return f'all {class_name}'
+        # "MyClass.count()" command
+        elif line.endswith(".count()"):
+            class_name = line.split('.')[0]
+            count = 0
+            for key in storage.all().keys():
+                if key.startswith(class_name):
+                    count += 1
+            print(count)
+            count = 0
+            return ""  # to avoid returning None
         else:
             return line
+
+    def help_precmd(self):
+        """
+        Intercepts and checks command inputs for specific commands
+        to either preprocess or implement and execute.
+
+        1. If <line> is of the form "MyClass.all()", precmd
+           changes it to "all MyCassName", which is
+           to be executed by do_all() handler
+
+            Usage:
+                MyClass.all()  # Translated to "all MyClass"
+
+        2. if <line> is of the form "MyClass.count(), precmd
+           implements counting of the number of occurrences of "MyClass"
+           instances and prints the count
+
+           Usage:
+                MyClass.count()
+        """
+        print(getattr(self, "help_precmd").__doc__)
 
     def emptyline(self):
         pass
