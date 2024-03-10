@@ -105,7 +105,7 @@ class TestUserInheritedMethods(unittest.TestCase):
             pass
 
     # save() method
-    def test_user_save_updated_at_unique(self):
+    def test_user_save_updated_at_changes(self):
         user = User()
         update1 = user.updated_at
         user.save()
