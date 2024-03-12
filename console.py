@@ -76,15 +76,15 @@ class HBNBCommand(cmd.Cmd):
 
         if num_toks == 0:
             print("** class name missing **")
-            return
         elif num_toks == 1:
             if line not in classes.keys():
                 print("** class doesn't exist **")
-                return
             else:
                 print("** instance id missing **")
-                return
         else:
+            if line.split()[0] not in classes.keys():
+                print("** class doesn't exist **")
+                return
             objs_dict = storage.all()
             key = f'{line.split()[0]}.{line.split()[1]}'
             print(objs_dict.get(key, "** no instance found **"))
@@ -103,10 +103,8 @@ class HBNBCommand(cmd.Cmd):
         elif num_toks == 1:
             if line not in classes.keys():
                 print("** class doesn't exist **")
-                return
             else:
                 print("** instance id missing **")
-                return
         else:
             if line.split()[0] not in classes.keys():
                 print("** class doesn't exist **")
@@ -114,7 +112,6 @@ class HBNBCommand(cmd.Cmd):
             key = f'{line.split()[0]}.{line.split()[1]}'
             if key not in storage.all().keys():
                 print("** no instance found **")
-                return
             else:
                 # delete instance from __objects dict
                 del storage.all()[key]
@@ -172,6 +169,9 @@ class HBNBCommand(cmd.Cmd):
         elif num_toks == 3:
             print("** value missing **")
         else:
+            if line.split()[0] not in classes.keys():
+                print("** class doesn't exist **")
+                return
             key = f'{line.split()[0]}.{line.split()[1]}'
             if key not in storage.all().keys():
                 print("** no instance found **")
