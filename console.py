@@ -26,14 +26,18 @@ classes = {
 
 def convert_to_num(attrib_value):
     """Maintains the type of an attribute value"""
-    try:
-        converted = int(attrib_value)
-    except ValueError:
+    if type(attrib_value) in (int, float):
+        return attrib_value
+    else:
         try:
-            converted = float(attrib_value)
+            converted = int(attrib_value)
+            return converted
         except ValueError:
-            converted = attrib_value
-    return converted
+            try:
+                converted = float(attrib_value)
+                return converted
+            except ValueError:
+                return attrib_value
 
 
 class HBNBCommand(cmd.Cmd):
@@ -183,10 +187,20 @@ class HBNBCommand(cmd.Cmd):
         Type "help precmd" + Enter for detailed information of the commands
         """
         # This pattern matches "MyClass.command('some-uuid')"
-        pattern = r'(\w+)\.(\w+)[(]"(.+?)"[)]'
-        match = re.match(pattern, line)
+        # where command is show or destroy
+        patn_1 = r'(\w+)\.(\w+)[(]"(.+?)"[)]'
+        match_showdestroy = re.match(patn_1, line)
+
+        # Matches MyClass.update(id, attribute_name, attribute_value)
+        patn_2 = r'(\w+)\.(\w+)\("([\w+-]+)", "(\w+)", "?((\w+)|\d+\.?\d+)"?\)'
+        match_update = re.match(patn_2, line)
+
+        # Matches MyClass.update(id, dictionary)
+        # patn_3 = r''
+        # match_update_using_dict = re.match(patn_3, line)
 
         # "MyClass.all()" command
+        # ---> "all MyClass"
         if line.endswith(".all()"):
             class_name = line.split('.')[0]
             return f'all {class_name}'
@@ -200,12 +214,34 @@ class HBNBCommand(cmd.Cmd):
             print(count)
             count = 0
             return ""  # to avoid returning None
-        # "MyClass.command()" line - command could be show/destroy
-        elif match:
-            class_name = match.group(1)
-            command = match.group(2)
-            class_id = match.group(3)
+        # "MyClass.command()" - command could be show/destroy
+        # ---> "show MyClass"
+        # ---> "destroy MyClass"
+        elif match_showdestroy and match_showdestroy.group(2) != 'update':
+            class_name = match_showdestroy.group(1)
+            command = match_showdestroy.group(2)
+            class_id = match_showdestroy.group(3)
             return f'{command} {class_name} {class_id}'
+        # MyClass.update(id, attribute_name, attribute_value)
+        # ---> "update MyClass id attribute_name attribute_value"
+        elif match_update:
+            class_name = match_update.group(1)
+            command = match_update.group(2)
+            class_id = match_update.group(3)
+            att_name = match_update.group(4)
+            att_value = match_update.group(5)
+            return f'update {class_name} {class_id} {att_name} {att_value}'
+        # MyClass.update(id, attribute_dictionary)
+        # ---> "update MyClass id attribute_name attribute_value"
+        # elif match_update_using_dict:
+        #     class_name = match_update_using_dict.group(1)
+        #     command = match_update_using_dict.group(2)
+        #     class_id = match_update_using_dict.group(3)
+        #     atts_dict = eval(match_update_using_dict.group(4))
+        #     print(type(atts_dict))
+            # att_name =
+            # att_value =
+            # return f'update {class_name} {class_id} {att_name} {att_value}'
         else:
             return line
 
