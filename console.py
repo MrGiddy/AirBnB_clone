@@ -107,11 +107,10 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** instance id missing **")
                 return
-        elif num_toks == 2:
+        else:
             if line.split()[0] not in classes.keys():
                 print("** class doesn't exist **")
                 return
-        else:
             key = f'{line.split()[0]}.{line.split()[1]}'
             if key not in storage.all().keys():
                 print("** no instance found **")
@@ -143,7 +142,7 @@ class HBNBCommand(cmd.Cmd):
                 class_instance_objs = []
                 target_class = classes[class_name]
                 for value in storage.all().values():
-                    if type(value) == target_class:
+                    if type(value) is target_class:
                         class_instance_objs.append(str(value))
                 print(class_instance_objs)
             else:

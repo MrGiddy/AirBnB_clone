@@ -1,18 +1,1 @@
-{
-    "User.635ef62c-15ea-4f47-ab02-a1ded41b4a04": {
-        "id": "635ef62c-15ea-4f47-ab02-a1ded41b4a04",
-        "created_at": "2024-03-12T04:31:48.942989",
-        "updated_at": "2024-03-12T04:31:48.943006",
-        "first_name": "John",
-        "age": 89,
-        "__class__": "User"
-    },
-    "User.e6e48779-a2de-4404-b418-1e84bd21f251": {
-        "id": "e6e48779-a2de-4404-b418-1e84bd21f251",
-        "created_at": "2024-03-12T06:51:29.950024",
-        "updated_at": "2024-03-12T06:51:29.950039",
-        "first_name": "John",
-        "age": 89,
-        "__class__": "User"
-    }
-}
+{"User.635ef62c-15ea-4f47-ab02-a1ded41b4a04": {"id": "635ef62c-15ea-4f47-ab02-a1ded41b4a04", "created_at": "2024-03-12T04:31:48.942989", "updated_at": "2024-03-12T04:31:48.943006", "first_name": "John", "age": 89, "__class__": "User"}, "User.e6e48779-a2de-4404-b418-1e84bd21f251": {"id": "e6e48779-a2de-4404-b418-1e84bd21f251", "created_at": "2024-03-12T06:51:29.950024", "updated_at": "2024-03-12T06:51:29.950039", "first_name": "John", "age": 89, "__class__": "User"}}
