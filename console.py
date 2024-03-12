@@ -107,6 +107,10 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** instance id missing **")
                 return
+        elif num_toks == 2:
+            if line.split()[0] not in classes.keys():
+                print("** class doesn't exist **")
+                return
         else:
             key = f'{line.split()[0]}.{line.split()[1]}'
             if key not in storage.all().keys():
@@ -195,9 +199,10 @@ class HBNBCommand(cmd.Cmd):
         patn_2 = r'(\w+)\.(\w+)\("([\w+-]+)", "(\w+)", "?((\w+)|\d+\.?\d+)"?\)'
         match_update = re.match(patn_2, line)
 
-        # Matches MyClass.update(id, dictionary)
-        # patn_3 = r''
-        # match_update_using_dict = re.match(patn_3, line)
+        # Partially matches "MyClass.update(id, dictionary)"
+        # ---> "MyClass.update(id, {"
+        patn_3 = r'^(\w+)\.(\w+)\("(.+?)",\s*\{'
+        match_update_using_dict = re.search(patn_3, line)
 
         # "MyClass.all()" command
         # ---> "all MyClass"
@@ -220,58 +225,33 @@ class HBNBCommand(cmd.Cmd):
         elif match_showdestroy and match_showdestroy.group(2) != 'update':
             class_name = match_showdestroy.group(1)
             command = match_showdestroy.group(2)
-            class_id = match_showdestroy.group(3)
-            return f'{command} {class_name} {class_id}'
+            instance_id = match_showdestroy.group(3)
+            return f'{command} {class_name} {instance_id}'
         # MyClass.update(id, attribute_name, attribute_value)
         # ---> "update MyClass id attribute_name attribute_value"
         elif match_update:
             class_name = match_update.group(1)
             command = match_update.group(2)
-            class_id = match_update.group(3)
+            instance_id = match_update.group(3)
             att_name = match_update.group(4)
             att_value = match_update.group(5)
-            return f'update {class_name} {class_id} {att_name} {att_value}'
+            return f'update {class_name} {instance_id} {att_name} {att_value}'
         # MyClass.update(id, attribute_dictionary)
         # ---> "update MyClass id attribute_name attribute_value"
-        # elif match_update_using_dict:
-        #     class_name = match_update_using_dict.group(1)
-        #     command = match_update_using_dict.group(2)
-        #     class_id = match_update_using_dict.group(3)
-        #     atts_dict = eval(match_update_using_dict.group(4))
-        #     print(type(atts_dict))
-            # att_name =
-            # att_value =
-            # return f'update {class_name} {class_id} {att_name} {att_value}'
+        elif match_update_using_dict:
+            line = line.split(".", 1)
+            class_name, the_rest = line[0], line[1]
+            line = the_rest.split("(", 1)
+            command, the_rest = line[0], line[1]
+            line = the_rest.split(',', 1)
+            inst_id, the_rest = line[0].strip('"'), line[1]
+            attrs_dict = eval(the_rest[1:-1])
+            for att_name, att_value in attrs_dict.items():
+                line = f'{class_name} {inst_id} {att_name} {att_value}'
+                self.do_update(line)
+            return ""  # To avoid returning None
         else:
             return line
-
-    def help_precmd(self):
-        """
-        `precmd` Intercepts and checks command inputs for specific commands
-        to either preprocess or implement and execute.
-
-        1. If <line> is of the form "AnyClass.all()", precmd
-           changes it to "all AnyClassName", which is
-           to be executed by do_all() handler
-
-            Usage:
-                AnyClass.all()  # Translated to "all MyClass"
-
-        2. if <line> is of the form "AnyClass.count(), precmd
-           implements counting of the number of occurrences of "AnyClass"
-           instances and prints the count
-
-           Usage:
-                AnyClass.count()
-
-        3. If <line> is of the form "AnyClass.show('some-uuid')", precmd
-           changes it to "show AnyClass some-uuid", which is
-           to be executed by do_show() handler
-
-        Usage:
-            AnyClass.show('a-uuid')  # Translated to 'show AnyClass a-uuid'
-        """
-        print(getattr(self, "help_precmd").__doc__)
 
     def emptyline(self):
         pass
@@ -284,6 +264,59 @@ class HBNBCommand(cmd.Cmd):
         """Ctrl + D exits the program\n"""
         print()
         return True
+
+    def help_precmd(self):
+        """
+        `precmd` Intercepts and checks command inputs for specific commands
+        to either preprocess or implement and execute.
+
+        1. If <line> is of the form "AnyClass.all()", precmd
+           changes it to "all AnyClass", which is
+           to be executed by do_all() handler
+
+            Usage:
+                AnyClass.all()
+
+        2. if <line> is of the form "AnyClass.count(), precmd
+           implements counting of the number of occurrences of "AnyClass"
+           instances and prints the count
+
+           Usage:
+                AnyClass.count()
+
+        3. If <line> is of the form "AnyClass.show('some-uuid')", precmd
+           changes it to "show AnyClass some-uuid", which is
+           to be executed by do_show() handler
+
+            Usage:
+                AnyClass.show('a-uuid')
+
+        4. If <line> is of the form "AnyClass.destroy('some-uuid')", precmd
+           changes it to "destroy AnyClass some-uuid", which is
+           to be executed by do_destroy() handler
+
+            Usage:
+                AnyClass.destroy('uuid')
+
+        5. If <line> is of the form
+           "AnyClass.update(uuid, attribute_name, attribute_value)", precmd
+           changes it to
+           "update AnyClass uuid attribute_name attribute_value",
+           which is to be executed by do_update() handler
+
+            Usage:
+                AnyClass.update(uuid, attribute_name, attribute_value)
+
+        6. If <line> is of the form
+           "AnyClass.update(id, attributes_dictionary)", precmd
+           changes it to "update AnyClass uuid attributes_dictionary",
+           which is to be executed by do_update() handler one attribute at
+           a time
+
+            Usage:
+                AnyClass.update(uuid, attributes_dictionary)
+        """
+        print(getattr(self, "help_precmd").__doc__)
 
 
 if __name__ == '__main__':
