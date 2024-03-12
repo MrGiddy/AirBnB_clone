@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+pycodestyle console.py
+pycodestyle ./models/*.py
+pycodestyle ./models/engine/*.py
+pycodestyle ./tests/test_models/*.py
+pycodestyle ./tests/test_models/test_engine/*.py
+python3 -m unittest discover tests
+echo "python3 -m unittest discover tests" | bash
+rm -r models/__pycache__/ tests/test_models/__pycache__/ models/engine/__pycache__/ tests/test_models/test_engine/__pycache__
